@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KDE Plasma Desktop Preview</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="desktop" class="desktop" aria-label="KDE Plasma desktop preview">
+    <div class="wallpaper" role="presentation"></div>
+
+    <!-- Folder View desktop (typically empty on a fresh install) -->
+    <div class="desktop-icons" id="desktop-icons" aria-label="Desktop"></div>
+
+    <!-- Kickoff Application Launcher -->
+    <div class="kickoff" id="kickoff" role="dialog" aria-label="Application Launcher" hidden>
+      <div class="kickoff-panel">
+        <!-- Header: avatar + search + tools -->
+        <header class="kickoff-header">
+          <div class="kickoff-user" title="User">
+            <div class="kickoff-avatar" aria-hidden="true">L</div>
+            <div class="kickoff-user-meta">
+              <span class="kickoff-username">Leon</span>
+            </div>
+          </div>
+          <div class="kickoff-search-wrap">
+            <img class="sym kickoff-search-icon" src="assets/actions/search.svg" alt="" draggable="false" />
+            <input
+              type="search"
+              id="kickoff-search"
+              class="kickoff-search"
+              placeholder="Search…"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Search applications"
+            />
+          </div>
+          <div class="kickoff-header-actions">
+            <button type="button" class="kickoff-tool-btn" title="Configure Application Launcher" aria-label="Configure">
+              <img class="sym" src="assets/actions/configure.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="kickoff-tool-btn" title="Keep Open" aria-label="Pin" aria-pressed="false">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8.5 1.5v5.3l2.2 3.3V12H5.3v-1.9l2.2-3.3V1.5h1zM4 13h8v1.5H4V13z"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Body: category sidebar + apps -->
+        <div class="kickoff-body" id="kickoff-body">
+          <aside class="kickoff-sidebar" id="kickoff-sidebar" aria-label="Categories">
+            <!-- filled by JS -->
+          </aside>
+          <div class="kickoff-content">
+            <div class="kickoff-section-title" id="kickoff-section-title">Favorites</div>
+            <div class="kickoff-apps" id="kickoff-apps" role="list" aria-label="Applications">
+              <!-- filled by JS -->
+            </div>
+            <p class="kickoff-empty" id="kickoff-empty" hidden>No matches</p>
+          </div>
+        </div>
+
+        <!-- Footer: Applications / Places tabs + leave buttons -->
+        <footer class="kickoff-footer">
+          <div class="kickoff-tabs" role="tablist">
+            <button type="button" class="kickoff-tab active" id="tab-apps" role="tab" aria-selected="true">Applications</button>
+            <button type="button" class="kickoff-tab" id="tab-places" role="tab" aria-selected="false">Places</button>
+          </div>
+          <div class="kickoff-leave" aria-label="Session">
+            <button type="button" class="kickoff-leave-btn" title="Sleep" aria-label="Sleep">
+              <img class="sym" src="assets/status/system-suspend.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="kickoff-leave-btn" title="Restart…" aria-label="Restart">
+              <img class="sym" src="assets/status/system-reboot.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="kickoff-leave-btn" title="Shut Down…" aria-label="Shut Down">
+              <img class="sym" src="assets/status/system-shutdown.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="kickoff-leave-btn" title="Log Out…" aria-label="Log Out">
+              <img class="sym" src="assets/status/system-log-out.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="kickoff-leave-btn" title="Lock Screen" aria-label="Lock Screen">
+              <img class="sym" src="assets/status/system-lock-screen.svg" alt="" draggable="false" />
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Calendar / digital clock popover -->
+    <div class="calendar-popover" id="calendar-popover" role="dialog" aria-label="Calendar" hidden>
+      <div class="cal-time" id="cal-time">00:00:00</div>
+      <div class="cal-date-line" id="cal-full-date">Saturday, 18 July 2026</div>
+      <div class="cal-month-nav">
+        <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="Previous month">‹</button>
+        <span class="cal-month-label" id="cal-month-label">July 2026</span>
+        <button type="button" class="cal-nav-btn" id="cal-next" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-weekdays" aria-hidden="true">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- Audio volume applet -->
+    <div class="tray-popover" id="sound-popover" role="dialog" aria-label="Audio Volume" hidden>
+      <div class="tray-popover-title">Devices</div>
+      <div class="sound-row">
+        <img class="sym sound-icon" src="assets/status/audio-volume-medium.svg" alt="" draggable="false" />
+        <div class="sound-meta">
+          <div class="sound-device">Speakers</div>
+          <input type="range" class="sound-slider" id="volume-slider" min="0" max="100" value="65" aria-label="Volume" />
+        </div>
+        <span class="sound-pct" id="volume-pct">65%</span>
+      </div>
+      <div class="tray-sep"></div>
+      <button type="button" class="tray-menu-item">Audio Volume Settings…</button>
+    </div>
+
+    <!-- Network applet -->
+    <div class="tray-popover" id="net-popover" role="dialog" aria-label="Networks" hidden>
+      <div class="tray-popover-title">Networks</div>
+      <div class="net-status">
+        <img class="sym" src="assets/status/network-wired.svg" alt="" draggable="false" />
+        <div>
+          <div class="net-name">Wired connection 1</div>
+          <div class="net-sub">Connected</div>
+        </div>
+      </div>
+      <div class="tray-sep"></div>
+      <button type="button" class="tray-menu-item">Configure Network Connections…</button>
+    </div>
+
+    <!-- Notifications placeholder -->
+    <div class="tray-popover" id="notif-popover" role="dialog" aria-label="Notifications" hidden>
+      <div class="tray-popover-title">Notifications</div>
+      <div class="notif-empty">No unread notifications</div>
+      <div class="tray-sep"></div>
+      <button type="button" class="tray-menu-item">Notification History…</button>
+    </div>
+
+    <!-- Battery -->
+    <div class="tray-popover" id="battery-popover" role="dialog" aria-label="Battery" hidden>
+      <div class="tray-popover-title">Power Management</div>
+      <div class="net-status">
+        <img class="sym" src="assets/status/battery-full.svg" alt="" draggable="false" />
+        <div>
+          <div class="net-name">Battery</div>
+          <div class="net-sub">98% — Fully Charged</div>
+        </div>
+      </div>
+      <div class="tray-sep"></div>
+      <button type="button" class="tray-menu-item">Power Management…</button>
+    </div>
+
+    <!-- Dolphin file manager -->
+    <div class="dolphin-window" id="dolphin-window" role="dialog" aria-label="Home — Dolphin" hidden>
+      <header class="dolphin-titlebar">
+        <div class="dolphin-titlebar-left">
+          <img class="dolphin-title-icon" src="assets/apps/system-file-manager.svg" alt="" draggable="false" />
+          <span class="dolphin-title" id="dolphin-title">Home</span>
+        </div>
+        <div class="dolphin-window-controls">
+          <button type="button" class="dolphin-wc dolphin-min" title="Minimize" aria-label="Minimize"></button>
+          <button type="button" class="dolphin-wc dolphin-max" id="dolphin-max" title="Maximize" aria-label="Maximize"></button>
+          <button type="button" class="dolphin-wc dolphin-close" id="dolphin-close" title="Close" aria-label="Close"></button>
+        </div>
+      </header>
+
+      <div class="dolphin-toolbar">
+        <div class="dolphin-tb-group">
+          <button type="button" class="dolphin-tb-btn" id="dolphin-back" title="Back" aria-label="Back" disabled>
+            <img class="sym" src="assets/actions/go-previous.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-forward" title="Forward" aria-label="Forward" disabled>
+            <img class="sym" src="assets/actions/go-next.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-up" title="Up" aria-label="Parent folder" disabled>
+            <img class="sym" src="assets/actions/go-up.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-home" title="Home" aria-label="Home">
+            <img class="sym" src="assets/actions/go-home.svg" alt="" draggable="false" />
+          </button>
+        </div>
+
+        <div class="dolphin-pathbar" id="dolphin-pathbar" title="Current location">
+          <button type="button" class="dolphin-crumb" data-path="home">
+            <img src="assets/places/user-home.svg" alt="" draggable="false" />
+            <span id="dolphin-path-label">Home</span>
+          </button>
+        </div>
+
+        <div class="dolphin-tb-group">
+          <button type="button" class="dolphin-tb-btn" id="dolphin-split" title="Split" aria-label="Split view">
+            <img class="sym" src="assets/actions/view-split-left-right.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-search-btn" title="Search" aria-label="Search" aria-pressed="false">
+            <img class="sym" src="assets/actions/search.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn active" id="dolphin-view-icons" title="Icons" aria-label="Icons" aria-pressed="true">
+            <img class="sym" src="assets/actions/view-list-icons.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-view-compact" title="Compact" aria-label="Compact" aria-pressed="false">
+            <img class="sym" src="assets/actions/view-list-tree.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-view-details" title="Details" aria-label="Details" aria-pressed="false">
+            <img class="sym" src="assets/actions/view-list-details.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="dolphin-tb-btn" id="dolphin-menu" title="Menu" aria-label="Menu">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 4h12v1.5H2V4zm0 3.25h12v1.5H2v-1.5zm0 3.25h12V12H2v-1.5z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="dolphin-body">
+        <aside class="dolphin-sidebar" id="dolphin-sidebar" aria-label="Places">
+          <!-- filled by JS -->
+        </aside>
+        <div class="dolphin-main">
+          <div class="dolphin-search-bar" id="dolphin-search-bar" hidden>
+            <img class="sym" src="assets/actions/search.svg" alt="" draggable="false" />
+            <input type="search" id="dolphin-search-input" class="dolphin-search-input" placeholder="Search…" autocomplete="off" spellcheck="false" />
+          </div>
+          <div class="dolphin-panes" id="dolphin-panes">
+            <div class="dolphin-pane focused" id="dolphin-pane-a" data-pane="a">
+              <div class="dolphin-content view-icons" id="dolphin-content-a" role="list">
+                <!-- items filled by JS -->
+              </div>
+            </div>
+            <div class="dolphin-pane" id="dolphin-pane-b" data-pane="b" hidden>
+              <div class="dolphin-content view-icons" id="dolphin-content-b" role="list">
+                <!-- items filled by JS -->
+              </div>
+            </div>
+          </div>
+          <footer class="dolphin-statusbar">
+            <span id="dolphin-status">8 items</span>
+            <span class="dolphin-status-free">128.4 GiB free</span>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating bottom panel (Plasma 6 default) -->
+    <footer class="panel" id="panel" role="toolbar" aria-label="Panel">
+      <div class="panel-inner">
+        <div class="panel-left">
+          <button type="button" class="panel-kickoff" id="kickoff-btn" aria-expanded="false" aria-controls="kickoff" title="Application Launcher">
+            <img src="assets/status/start-here-kde.svg" alt="" class="kickoff-logo" draggable="false" />
+          </button>
+
+          <!-- Virtual Desktop Pager -->
+          <div class="pager" id="pager" aria-label="Virtual Desktops" title="Virtual Desktops">
+            <button type="button" class="pager-desk active" data-desk="1" aria-label="Desktop 1" aria-current="true"></button>
+            <button type="button" class="pager-desk" data-desk="2" aria-label="Desktop 2"></button>
+          </div>
+
+          <!-- Icons-Only Task Manager -->
+          <div class="task-manager" id="task-manager" aria-label="Task Manager">
+            <button type="button" class="task" data-app="dolphin" id="task-dolphin" title="Dolphin">
+              <img src="assets/apps/system-file-manager.svg" alt="" draggable="false" />
+              <span class="task-indicator" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="task" data-app="firefox" title="Firefox">
+              <img src="assets/apps/firefox.svg" alt="" draggable="false" />
+              <span class="task-indicator" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="task" data-app="konsole" title="Konsole">
+              <img src="assets/apps/utilities-terminal.svg" alt="" draggable="false" />
+              <span class="task-indicator" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="task" data-app="systemsettings" title="System Settings">
+              <img src="assets/apps/systemsettings.svg" alt="" draggable="false" />
+              <span class="task-indicator" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-right">
+          <!-- System Tray -->
+          <div class="system-tray" id="system-tray" aria-label="System Tray">
+            <button type="button" class="tray-btn" id="notif-btn" title="Notifications" aria-expanded="false" aria-controls="notif-popover">
+              <img class="sym" src="assets/status/notifications.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tray-btn" id="net-btn" title="Networks" aria-expanded="false" aria-controls="net-popover">
+              <img class="sym" src="assets/status/network-wired.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tray-btn" id="bluetooth-btn" title="Bluetooth">
+              <img class="sym" src="assets/status/network-bluetooth.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tray-btn" id="sound-btn" title="Audio Volume" aria-expanded="false" aria-controls="sound-popover">
+              <img class="sym" src="assets/status/audio-volume-medium.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tray-btn" id="battery-btn" title="Battery" aria-expanded="false" aria-controls="battery-popover">
+              <img class="sym" src="assets/status/battery-full.svg" alt="" draggable="false" />
+            </button>
+          </div>
+
+          <!-- Digital Clock -->
+          <button type="button" class="panel-clock" id="clock-btn" title="Digital Clock" aria-expanded="false" aria-controls="calendar-popover">
+            <span class="clock-time" id="clock-time">00:00</span>
+            <span class="clock-date" id="clock-date">Sat 18</span>
+          </button>
+
+          <!-- Show Desktop -->
+          <button type="button" class="show-desktop" id="show-desktop-btn" title="Peek at Desktop" aria-label="Peek at Desktop">
+            <span class="show-desktop-bar" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
